@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Namaz Recorder",
+    "slug": "namaz-recorder",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F4F9F5",
+    "splash": {
+      "backgroundColor": "#1B4D3E",
+      "resizeMode": "contain"
+    },
+    "android": {
+      "package": "com.namazrecorder.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#1B4D3E"
+      },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "ACTIVITY_RECOGNITION",
+        "ACCESS_NOTIFICATION_POLICY",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
+      ]
+    }
+  }
+}
