@@ -2,15 +2,22 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
 import { env } from './config/env.js';
 import { apiRouter } from './routes/api.js';
 
 export const app = express();
 
 // Security Middlewares
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false // Allows inline SVG & simulator preview scripts
+}));
 app.use(cors({ origin: env.CORS_ORIGIN }));
 app.use(express.json({ limit: '1mb' }));
+
+// Serve static preview UI
+const publicDir = path.join(process.cwd(), 'public');
+app.use(express.static(publicDir));
 
 // Rate Limiting to prevent brute-force & DDoS (Scalable for 10,000+ users)
 const limiter = rateLimit({

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Namaz Recorder - Mobile Live Simulator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F4F9F5;
+      --card-bg: #FFFFFF;
+      --surface-soft: #EAF5EE;
+      --surface-soft-2: #E0F2E9;
+      --primary: #1B4D3E;
+      --primary-dark: #0D3328;
+      --accent-green: #2E7D32;
+      --prayed-color: #2E7D32;
+      --prayed-bg: #E8F5E9;
+      --missed-color: #C62828;
+      --missed-bg: #FFEBEE;
+      --recovered-color: #00796B;
+      --recovered-bg: #E0F2F1;
+      --pending-color: #718096;
+      --pending-bg: #F1F5F9;
+      --border-color: #E2E8F0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    body {
+      background: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      color: #1e293b;
+    }
+
+    .device-container {
+      width: 412px;
+      height: 870px;
+      background: var(--bg);
+      border-radius: 44px;
+      border: 10px solid #1e293b;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .notch-bar {
+      height: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .top-header {
+      padding: 12px 20px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .app-title-group h1 {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+
+    .app-title-group p {
+      font-size: 10.5px;
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    .sound-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .sound-badge.silent {
+      background: #DCFCE7;
+      color: #166534;
+    }
+
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 18px 80px;
+    }
+
+    /* Next prayer prominent card */
+    .next-prayer-hero {
+      background: linear-gradient(135deg, #EAF5EE, #D7EFE2);
+      border: 2px solid var(--accent-green);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(27, 77, 62, 0.08);
+      margin-bottom: 16px;
+      text-align: center;
+      position: relative;
+    }
+
+    .next-prayer-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      background: var(--primary);
+      color: white;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .next-prayer-name {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+    }
+
+    .countdown-timer {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--accent-green);
+      letter-spacing: 1px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .countdown-caption {
+      font-size: 11.5px;
+      color: #4A5568;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* 1-Tap Prompt Card */
+    .prompt-box {
+      background: #EFF6FF;
+      border: 1.5px dashed #3B82F6;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 16px;
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    .prompt-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1E40AF;
+      margin-bottom: 10px;
+    }
+
+    .prompt-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-prompt {
+      border: none;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #DBEAFE;
+      color: #1E40AF;
+      transition: all 0.2s;
+    }
+
+    .btn-prompt:hover { background: #BFDBFE; }
+
+    /* Prayer Cards List */
+    .section-title {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 12px 0 8px;
+    }
+
+    .prayer-card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      border: 1.5px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+      transition: transform 0.15s ease;
+    }
+
+    .prayer-card.highlight {
+      border-color: var(--accent-green);
+      background: #FAFCFA;
+    }
+
+    .prayer-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .p-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .p-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .p-meta {
+      font-size: 11px;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    .status-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-PRAYED { background: var(--prayed-bg); color: var(--prayed-color); }
+    .badge-MISSED { background: var(--missed-bg); color: var(--missed-color); }
+    .badge-RECOVERED { background: var(--recovered-bg); color: var(--recovered-color); }
+    .badge-PENDING { background: var(--pending-bg); color: var(--pending-color); }
+
+    /* Interactive Simulation Bar */
+    .simulator-panel {
+      background: #FFFFFF;
+      border-top: 1.5px solid var(--border-color);
+      padding: 12px 16px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-action {
+      flex: 1;
+      margin: 0 4px;
+      padding: 10px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-action:hover { opacity: 0.9; }
+
+    .btn-geo { background: #E8F5E9; color: #1B4D3E; }
+    .btn-motion { background: #FEF3C7; color: #92400E; }
+    .btn-report { background: #1B4D3E; color: white; }
+
+    /* Modal for WhatsApp Preview */
+    .modal-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(3px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-card {
+      background: white;
+      border-radius: 24px;
+      width: 100%;
+      max-height: 90%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      padding: 14px 18px;
+      background: var(--surface-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 14px;
+    }
+
+    .modal-body {
+      padding: 16px;
+      overflow-y: auto;
+      text-align: center;
+    }
+
+    .modal-body svg {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .modal-footer {
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+      background: #F8FAFC;
+    }
+
+    .btn-modal {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-close { background: #E2E8F0; color: #475569; }
+    .btn-share { background: #25D366; color: white; }
+  </style>
+</head>
+<body>
+
+  <div class="device-container">
+    <!-- Status Bar -->
+    <div class="notch-bar">
+      <span>21:55</span>
+      <span>📶 5G &nbsp; 🔋 98%</span>
+    </div>
+
+    <!-- Header -->
+    <div class="top-header">
+      <div class="app-title-group">
+        <h1>Namaz Recorder</h1>
+        <p>Smart &amp; Khud-kaar Tracker</p>
+      </div>
+      <div id="soundBadge" class="sound-badge">🔕 Silent Active</div>
+    </div>
+
+    <!-- Scroll Content -->
+    <div class="scroll-content">
+      <!-- Prominent Next Prayer Card -->
+      <div class="next-prayer-hero">
+        <span class="next-prayer-badge">Agli Namaz (Next)</span>
+        <div id="nextPrayerName" class="next-prayer-name">ZUHR</div>
+        <div id="countdown" class="countdown-timer">00:42:15</div>
+        <div id="nextPrayerTime" class="countdown-caption">Jamaat: 01:30 PM (Muhallay ki Masjid)</div>
+      </div>
+
+      <!-- 1-Tap Fallback Prompt (Simulated) -->
+      <div id="promptBox" class="prompt-box">
+        <div class="prompt-title">❓ Fajr Jamaat guzar gayi — Kya aap ne namaz parh li?</div>
+        <div class="prompt-buttons">
+          <button class="btn-prompt" onclick="resolvePrompt('MASJID')">🕌 Masjid mein parhi</button>
+          <button class="btn-prompt" onclick="resolvePrompt('HOME')">🏠 Ghar par parhi</button>
+        </div>
+      </div>
+
+      <div class="section-title">Aaj Ki Namazein (Today's Prayers)</div>
+      <div id="prayerListContainer">
+        <!-- Injected via JS -->
+      </div>
+
+      <div class="section-title" style="margin-top: 16px;">Qaza Bank &amp; Insights</div>
+      <div class="prayer-card" style="background: var(--surface-soft); border-color: #C8E6C9;">
+        <div class="prayer-left">
+          <span style="font-weight: 800; color: var(--primary); font-size: 14px;">Qaza Bank</span>
+          <span id="qazaText" style="font-size: 11.5px; color: #2E7D32;">Alhamdulillah 0 Qaza Pending</span>
+        </div>
+        <button id="recoverBtn" style="display:none; padding: 6px 12px; border-radius: 8px; background: #C62828; color: white; border: none; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="recoverLatestQaza()">Ada Karein</button>
+      </div>
+    </div>
+
+    <!-- Bottom Simulation Controls -->
+    <div class="simulator-panel">
+      <button class="btn-action btn-geo" onclick="triggerGeofence()">
+        <span>📍 Masjid</span>
+        <span style="font-size: 9px;">Geofence Zone</span>
+      </button>
+      <button class="btn-action btn-motion" onclick="triggerPocketMotion()">
+        <span>📱 Motion</span>
+        <span style="font-size: 9px;">Ruku &amp; Sujood</span>
+      </button>
+      <button class="btn-action btn-report" onclick="openReportModal()">
+        <span>📊 Report</span>
+        <span style="font-size: 9px;">WhatsApp Card</span>
+      </button>
+    </div>
+
+    <!-- WhatsApp Share Modal -->
+    <div id="reportModal" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span>Today's WhatsApp Report Card</span>
+          <span style="cursor:pointer;" onclick="closeReportModal()">✕</span>
+        </div>
+        <div class="modal-body" id="modalSvgContainer">
+          <p>Loading card...</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-modal btn-close" onclick="closeReportModal()">Band Karein</button>
+          <button class="btn-modal btn-share" onclick="alert('Report card ready! WhatsApp sharing link triggered.')">WhatsApp par Bheinjein 📲</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let authToken = '';
+    let dailyData = [];
+    let countdownSeconds = 2535;
+
+    // Countdown interval
+    setInterval(() => {
+      if (countdownSeconds > 0) {
+        countdownSeconds--;
+        const h = Math.floor(countdownSeconds / 3600).toString().padStart(2, '0');
+        const m = Math.floor((countdownSeconds % 3600) / 60).toString().padStart(2, '0');
+        const s = (countdownSeconds % 60).toString().padStart(2, '0');
+        document.getElementById('countdown').innerText = `${h}:${m}:${s}`;
+      }
+    }, 1000);
+
+    async function initApp() {
+      try {
+        // Register or login a local simulator session
+        const loginRes = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'bilal@test.com', password: 'Password123!' })
+        });
+        const loginBody = await loginRes.json();
+        
+        if (loginBody.success) {
+          authToken = loginBody.data.token;
+        } else {
+          // Register
+          const regRes = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: 'bilal@test.com',
+              password: 'Password123!',
+              name: 'Bilal Khan'
+            })
+          });
+          const regBody = await regRes.json();
+          authToken = regBody.data.token;
+        }
+
+        await loadDailyPrayers();
+      } catch (err) {
+        console.error('Simulator init error:', err);
+      }
+    }
+
+    async function loadDailyPrayers() {
+      const today = new Date().toISOString().split('T')[0];
+      const res = await fetch(`/api/prayers/daily?date=${today}`, {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
+      const body = await res.json();
+      if (body.success) {
+        dailyData = body.data.prayers;
+        renderPrayers(body.data.prayers);
+      }
+    }
+
+    function renderPrayers(prayers) {
+      const container = document.getElementById('prayerListContainer');
+      container.innerHTML = '';
+
+      prayers.forEach(p => {
+        const div = document.createElement('div');
+        div.className = `prayer-card ${p.prayerName === 'ZUHR' ? 'highlight' : ''}`;
+        
+        const loc = p.location === 'MASJID' ? 'Masjid' : 'Ghar';
+        const track = p.trackingMethod === 'GEOFENCE' ? '📍 Masjid Zone' : p.trackingMethod === 'MOTION' ? '📱 Motion Sensor' : '✍️ Manual';
+        const time = p.prayedAt ? new Date(p.prayedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--';
+
+        div.innerHTML = `
+          <div class="prayer-left">
+            <div class="p-title-row">
+              <span class="p-name">${p.prayerName}</span>
+              ${p.prayerName === 'ZUHR' ? '<span style="font-size:10px; background:#2E7D32; color:white; padding:1px 6px; border-radius:10px;">Agli</span>' : ''}
+            </div>
+            <span class="p-meta">${track} • ${time} (${loc})</span>
+          </div>
+          <span class="status-badge badge-${p.status}">${p.status === 'PRAYED' ? '✓ Ada' : p.status}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function triggerGeofence() {
+      const today = new Date().toISOString().split('T')[0];
+      const res = await fetch('/api/prayers/geofence-ping', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          prayerName: 'ZUHR',
+          date: today,
+          latitude: 31.5204,
+          longitude: 74.3587
+        })
+      });
+      const body = await res.json();
+      if (body.success) {
+        alert('🎉 Masjid Location Zone Detected! Zuhr marked as Prayed at Masjid automatically.');
+        await loadDailyPrayers();
+      }
+    }
+
+    async function triggerPocketMotion() {
+      const today = new Date().toISOString().split('T')[0];
+      const res = await fetch('/api/prayers/motion-completed', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          prayerName: 'ASR',
+          date: today
+        })
+      });
+      const body = await res.json();
+      if (body.success) {
+        alert('📱 Pocket Motion Sensors Detected Qiyam -> Ruku -> Sujood! Asr automatically recorded.');
+        await loadDailyPrayers();
+      }
+    }
+
+    async function resolvePrompt(location) {
+      document.getElementById('promptBox').style.display = 'none';
+      alert(`Fajr marked as Prayed at ${location} via 1-Tap Prompt!`);
+      await loadDailyPrayers();
+    }
+
+    async function openReportModal() {
+      const modal = document.getElementById('reportModal');
+      const container = document.getElementById('modalSvgContainer');
+      modal.style.display = 'flex';
+      container.innerHTML = '<p>Generating high-res WhatsApp card...</p>';
+
+      const today = new Date().toISOString().split('T')[0];
+      const res = await fetch(`/api/report-card?date=${today}`, {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
+      const svg = await res.text();
+      container.innerHTML = svg;
+    }
+
+    function closeReportModal() {
+      document.getElementById('reportModal').style.display = 'none';
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
