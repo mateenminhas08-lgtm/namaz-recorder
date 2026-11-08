@@ -9,8 +9,8 @@
     "mobile"
   ],
   "scripts": {
-    "test": "npm --prefix backend test && npm --prefix packages/shared test",
-    "build": "npm --prefix packages/shared run build && npm --prefix backend run build",
+    "test": "npm --prefix packages/shared test && npm --prefix backend test && npm --prefix mobile test",
+    "build": "npm --prefix packages/shared run build && npm --prefix backend run build && npm --prefix mobile run build",
     "lint": "echo 'Linting complete'"
   },
   "keywords": ["namaz", "prayer-tracker", "geofencing", "islamic-app", "qaza"],
