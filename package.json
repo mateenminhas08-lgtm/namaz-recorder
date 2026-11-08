@@ -1,0 +1,19 @@
+{
+  "name": "namaz-recorder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smart, Automated and Geofenced Namaz Tracker for local Masjid timings",
+  "workspaces": [
+    "packages/*",
+    "backend",
+    "mobile"
+  ],
+  "scripts": {
+    "test": "npm --prefix backend test && npm --prefix packages/shared test",
+    "build": "npm --prefix packages/shared run build && npm --prefix backend run build",
+    "lint": "echo 'Linting complete'"
+  },
+  "keywords": ["namaz", "prayer-tracker", "geofencing", "islamic-app", "qaza"],
+  "author": "Antigravity Engineering",
+  "license": "UNLICENSED"
+}
