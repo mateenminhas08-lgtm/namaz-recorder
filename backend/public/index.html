@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Namaz Recorder - Mobile Live Simulator</title>
+  <title>Namaz Recorder - Full Mobile App</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -28,12 +28,12 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
 
     body {
-      background: #0f172a;
+      background: #0B132B;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 24px;
+      padding: 20px;
       color: #1e293b;
     }
 
@@ -41,17 +41,18 @@
       width: 412px;
       height: 870px;
       background: var(--bg);
-      border-radius: 44px;
-      border: 10px solid #1e293b;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.1);
+      border-radius: 46px;
+      border: 12px solid #1e293b;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255,255,255,0.1);
       position: relative;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
+    /* Top Notch & Status */
     .notch-bar {
-      height: 28px;
+      height: 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -59,24 +60,27 @@
       font-size: 11px;
       font-weight: 700;
       color: var(--primary);
+      background: var(--bg);
+      z-index: 10;
     }
 
     .top-header {
-      padding: 12px 20px 8px;
+      padding: 10px 20px 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: var(--bg);
     }
 
     .app-title-group h1 {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 800;
       color: var(--primary);
       letter-spacing: -0.5px;
     }
 
     .app-title-group p {
-      font-size: 10.5px;
+      font-size: 10px;
       color: var(--accent-green);
       font-weight: 600;
     }
@@ -86,19 +90,23 @@
       font-weight: 700;
       padding: 4px 10px;
       border-radius: 12px;
-      background: #FEF3C7;
-      color: #92400E;
-    }
-
-    .sound-badge.silent {
       background: #DCFCE7;
       color: #166534;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .scroll-content {
+    /* Tab Page Containers */
+    .tab-content {
       flex: 1;
       overflow-y: auto;
-      padding: 12px 18px 80px;
+      padding: 12px 18px 85px;
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
     }
 
     /* Next prayer prominent card */
@@ -153,16 +161,15 @@
       background: #EFF6FF;
       border: 1.5px dashed #3B82F6;
       border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 16px;
-      animation: pulse 2s infinite ease-in-out;
+      padding: 12px 14px;
+      margin-bottom: 14px;
     }
 
     .prompt-title {
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 700;
       color: #1E40AF;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .prompt-buttons {
@@ -180,14 +187,11 @@
       cursor: pointer;
       background: #DBEAFE;
       color: #1E40AF;
-      transition: all 0.2s;
     }
-
-    .btn-prompt:hover { background: #BFDBFE; }
 
     /* Prayer Cards List */
     .section-title {
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 800;
       color: #64748B;
       text-transform: uppercase;
@@ -199,13 +203,12 @@
       background: var(--card-bg);
       border-radius: 14px;
       padding: 12px 14px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       border: 1.5px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-      transition: transform 0.15s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
 
     .prayer-card.highlight {
@@ -226,13 +229,13 @@
     }
 
     .p-name {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: var(--primary);
     }
 
     .p-meta {
-      font-size: 11px;
+      font-size: 10.5px;
       color: #64748B;
       font-weight: 500;
     }
@@ -240,11 +243,8 @@
     .status-badge {
       font-size: 11px;
       font-weight: 700;
-      padding: 5px 12px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 16px;
     }
 
     .badge-PRAYED { background: var(--prayed-bg); color: var(--prayed-color); }
@@ -252,109 +252,188 @@
     .badge-RECOVERED { background: var(--recovered-bg); color: var(--recovered-color); }
     .badge-PENDING { background: var(--pending-bg); color: var(--pending-color); }
 
-    /* Interactive Simulation Bar */
-    .simulator-panel {
-      background: #FFFFFF;
-      border-top: 1.5px solid var(--border-color);
-      padding: 12px 16px;
+    /* Settings UI Cards */
+    .settings-card {
+      background: white;
+      border-radius: 16px;
+      padding: 14px;
+      border: 1.5px solid var(--border-color);
+      margin-bottom: 12px;
+    }
+
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #F1F5F9;
+    }
+
+    .settings-row:last-child { border-bottom: none; }
+
+    .settings-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .settings-sub {
+      font-size: 11px;
+      color: #64748B;
+      margin-top: 2px;
+    }
+
+    .adjust-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-adjust {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid #CBD5E1;
+      background: #F8FAFC;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+    }
+
+    .time-val {
+      font-size: 13px;
+      font-weight: 700;
+      min-width: 48px;
+      text-align: center;
+    }
+
+    /* Switch toggle */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #CBD5E1;
+      transition: .3s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider { background-color: var(--accent-green); }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    /* Select Dropdowns */
+    .styled-select {
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid #CBD5E1;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: #F8FAFC;
+      outline: none;
+    }
+
+    /* Simulation Bar for Testing */
+    .sim-banner {
+      background: #FEF3C7;
+      border-left: 4px solid #F59E0B;
+      padding: 8px 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-size: 11px;
+      color: #92400E;
+      line-height: 1.4;
+    }
+
+    .sim-buttons {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .btn-sim {
+      flex: 1;
+      padding: 6px;
+      border: none;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-sim-geo { background: #10B981; color: white; }
+    .btn-sim-motion { background: #F59E0B; color: white; }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
+      height: 68px;
+      background: #FFFFFF;
+      border-top: 1.5px solid var(--border-color);
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
       align-items: center;
+      padding-bottom: 4px;
+      z-index: 50;
     }
 
-    .btn-action {
-      flex: 1;
-      margin: 0 4px;
-      padding: 10px 8px;
-      border-radius: 10px;
-      font-size: 11px;
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: none;
+      border: none;
+      color: #94A3B8;
+      font-size: 10px;
       font-weight: 700;
       cursor: pointer;
-      border: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      transition: opacity 0.2s;
+      width: 20%;
+      transition: color 0.2s;
     }
 
-    .btn-action:hover { opacity: 0.9; }
-
-    .btn-geo { background: #E8F5E9; color: #1B4D3E; }
-    .btn-motion { background: #FEF3C7; color: #92400E; }
-    .btn-report { background: #1B4D3E; color: white; }
-
-    /* Modal for WhatsApp Preview */
-    .modal-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(3px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      z-index: 100;
+    .nav-item.active {
+      color: var(--accent-green);
     }
 
-    .modal-card {
-      background: white;
-      border-radius: 24px;
-      width: 100%;
-      max-height: 90%;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    .nav-icon {
+      font-size: 19px;
     }
 
-    .modal-header {
-      padding: 14px 18px;
-      background: var(--surface-soft);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 800;
-      color: var(--primary);
-      font-size: 14px;
-    }
-
-    .modal-body {
-      padding: 16px;
-      overflow-y: auto;
-      text-align: center;
-    }
-
-    .modal-body svg {
+    /* Modal / Report Card */
+    .report-card-container svg {
       width: 100%;
       height: auto;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
     }
-
-    .modal-footer {
-      padding: 12px;
-      display: flex;
-      gap: 8px;
-      background: #F8FAFC;
-    }
-
-    .btn-modal {
-      flex: 1;
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-close { background: #E2E8F0; color: #475569; }
-    .btn-share { background: #25D366; color: white; }
   </style>
 </head>
 <body>
@@ -362,8 +441,8 @@
   <div class="device-container">
     <!-- Status Bar -->
     <div class="notch-bar">
-      <span>21:55</span>
-      <span>📶 5G &nbsp; 🔋 98%</span>
+      <span>22:05</span>
+      <span>📶 5G &nbsp; 🔋 99%</span>
     </div>
 
     <!-- Header -->
@@ -372,17 +451,26 @@
         <h1>Namaz Recorder</h1>
         <p>Smart &amp; Khud-kaar Tracker</p>
       </div>
-      <div id="soundBadge" class="sound-badge">🔕 Silent Active</div>
+      <div id="soundBadge" class="sound-badge">🔕 Auto-Silent On</div>
     </div>
 
-    <!-- Scroll Content -->
-    <div class="scroll-content">
+    <!-- ==================== TAB 1: HOME ==================== -->
+    <div id="tab-home" class="tab-content active">
       <!-- Prominent Next Prayer Card -->
       <div class="next-prayer-hero">
         <span class="next-prayer-badge">Agli Namaz (Next)</span>
         <div id="nextPrayerName" class="next-prayer-name">ZUHR</div>
-        <div id="countdown" class="countdown-timer">00:42:15</div>
+        <div id="countdown" class="countdown-timer">00:38:20</div>
         <div id="nextPrayerTime" class="countdown-caption">Jamaat: 01:30 PM (Muhallay ki Masjid)</div>
+      </div>
+
+      <!-- Live Simulator Explanation Banner -->
+      <div class="sim-banner">
+        <strong>💡 Note for Testing:</strong> Asal mobile mein GPS aur Pocket Sensor khud background mein chalte hain! Browser mein test karne ke liye neeche buttons use karein:
+        <div class="sim-buttons">
+          <button class="btn-sim btn-sim-geo" onclick="triggerGeofence()">📍 Simulate Masjid Geofence</button>
+          <button class="btn-sim btn-sim-motion" onclick="triggerPocketMotion()">📱 Simulate Pocket Motion</button>
+        </div>
       </div>
 
       <!-- 1-Tap Fallback Prompt (Simulated) -->
@@ -394,62 +482,269 @@
         </div>
       </div>
 
-      <div class="section-title">Aaj Ki Namazein (Today's Prayers)</div>
+      <div class="section-title">Aaj Ki Paanchon Namazein</div>
       <div id="prayerListContainer">
-        <!-- Injected via JS -->
-      </div>
-
-      <div class="section-title" style="margin-top: 16px;">Qaza Bank &amp; Insights</div>
-      <div class="prayer-card" style="background: var(--surface-soft); border-color: #C8E6C9;">
-        <div class="prayer-left">
-          <span style="font-weight: 800; color: var(--primary); font-size: 14px;">Qaza Bank</span>
-          <span id="qazaText" style="font-size: 11.5px; color: #2E7D32;">Alhamdulillah 0 Qaza Pending</span>
-        </div>
-        <button id="recoverBtn" style="display:none; padding: 6px 12px; border-radius: 8px; background: #C62828; color: white; border: none; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="recoverLatestQaza()">Ada Karein</button>
+        <!-- Rendered via JS -->
       </div>
     </div>
 
-    <!-- Bottom Simulation Controls -->
-    <div class="simulator-panel">
-      <button class="btn-action btn-geo" onclick="triggerGeofence()">
-        <span>📍 Masjid</span>
-        <span style="font-size: 9px;">Geofence Zone</span>
-      </button>
-      <button class="btn-action btn-motion" onclick="triggerPocketMotion()">
-        <span>📱 Motion</span>
-        <span style="font-size: 9px;">Ruku &amp; Sujood</span>
-      </button>
-      <button class="btn-action btn-report" onclick="openReportModal()">
-        <span>📊 Report</span>
-        <span style="font-size: 9px;">WhatsApp Card</span>
+    <!-- ==================== TAB 2: QAZA BANK ==================== -->
+    <div id="tab-qaza" class="tab-content">
+      <div class="section-title">Qaza Bank (Hisaab &amp; Recovery)</div>
+      
+      <div class="settings-card" style="background: linear-gradient(135deg, #FFF1F2, #FFE4E6); border-color: #FECDD3; text-align: center; padding: 20px;">
+        <span style="font-size: 13px; font-weight: 700; color: #9F1239;">Total Pending Qaza</span>
+        <div id="totalQazaCounter" style="font-size: 42px; font-weight: 800; color: #BE123C; margin: 4px 0;">1</div>
+        <p style="font-size: 11px; color: #9F1239;">Chhooti hui namazein yahan jama hoti hain taake zimma saaf ho sake.</p>
+      </div>
+
+      <div class="section-title">Pending Qaza Namazon ki List</div>
+      <div id="qazaListContainer">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- ==================== TAB 3: INSIGHTS & CALENDAR ==================== -->
+    <div id="tab-insights" class="tab-content">
+      <div class="section-title">Namaz Tajziya (Weekly / Monthly)</div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+        <div class="settings-card" style="margin-bottom:0; text-align:center;">
+          <span style="font-size: 11px; color: #64748B; font-weight: 600;">Ada Shuda</span>
+          <div id="statTotalPrayed" style="font-size: 24px; font-weight: 800; color: var(--accent-green);">4</div>
+          <span style="font-size: 10px; color: #64748B;">Namazein</span>
+        </div>
+        <div class="settings-card" style="margin-bottom:0; text-align:center;">
+          <span style="font-size: 11px; color: #64748B; font-weight: 600;">Masjid Ratio</span>
+          <div id="statMasjidRatio" style="font-size: 24px; font-weight: 800; color: var(--primary);">75%</div>
+          <span style="font-size: 10px; color: #64748B;">Ba-Jamaat</span>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Aksar Miss Hone Wali Namaz</div>
+            <div class="settings-sub">Pichle 30 dinon ka record</div>
+          </div>
+          <span id="statMostMissed" style="font-weight: 800; color: #C62828; font-size: 14px;">Fajr</span>
+        </div>
+      </div>
+
+      <div class="section-title">Mahana Calendar History</div>
+      <div class="settings-card" style="text-align: center; padding: 18px;">
+        <span style="font-size: 13px; font-weight: 800; color: var(--primary);">November 2026</span>
+        <p style="font-size: 11px; color: #64748B; margin-top: 6px;">📅 Aaj ka score: <strong>4/5 Namazein Ada Huin</strong></p>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 4: TODAY'S REPORT ==================== -->
+    <div id="tab-report" class="tab-content">
+      <div class="section-title">WhatsApp Today's Report Image</div>
+      <p style="font-size: 11px; color: #64748B; margin-bottom: 12px;">Full-detail designed card jo WhatsApp par share karne ke liye tayyar hai:</p>
+      
+      <div id="reportSvgHolder" class="report-card-container">
+        <p style="text-align:center; padding: 20px;">Generating Full-Detail Card...</p>
+      </div>
+
+      <button style="width: 100%; margin-top: 14px; padding: 12px; border-radius: 12px; background: #25D366; color: white; border: none; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="shareOnWhatsApp()">
+        <span>Share to WhatsApp</span> 📲
       </button>
     </div>
 
-    <!-- WhatsApp Share Modal -->
-    <div id="reportModal" class="modal-overlay">
-      <div class="modal-card">
-        <div class="modal-header">
-          <span>Today's WhatsApp Report Card</span>
-          <span style="cursor:pointer;" onclick="closeReportModal()">✕</span>
+    <!-- ==================== TAB 5: SETTINGS ==================== -->
+    <div id="tab-settings" class="tab-content">
+      <div class="section-title">Masjid Jamaat Auqat (Timings &amp; Quick Adjust)</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Fajr Jamaat</div>
+            <div class="settings-sub">Muhallay ki Masjid</div>
+          </div>
+          <div class="adjust-group">
+            <button class="btn-adjust" onclick="adjustTime('fajr', -5)">-</button>
+            <span id="time-fajr" class="time-val">05:30</span>
+            <button class="btn-adjust" onclick="adjustTime('fajr', 5)">+</button>
+          </div>
         </div>
-        <div class="modal-body" id="modalSvgContainer">
-          <p>Loading card...</p>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Zuhr Jamaat</div>
+            <div class="settings-sub">Aam dinon mein</div>
+          </div>
+          <div class="adjust-group">
+            <button class="btn-adjust" onclick="adjustTime('zuhr', -5)">-</button>
+            <span id="time-zuhr" class="time-val">13:30</span>
+            <button class="btn-adjust" onclick="adjustTime('zuhr', 5)">+</button>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn-modal btn-close" onclick="closeReportModal()">Band Karein</button>
-          <button class="btn-modal btn-share" onclick="alert('Report card ready! WhatsApp sharing link triggered.')">WhatsApp par Bheinjein 📲</button>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Asr Jamaat</div>
+            <div class="settings-sub">Hanafi / Shafi timing</div>
+          </div>
+          <div class="adjust-group">
+            <button class="btn-adjust" onclick="adjustTime('asr', -5)">-</button>
+            <span id="time-asr" class="time-val">16:45</span>
+            <button class="btn-adjust" onclick="adjustTime('asr', 5)">+</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Maghrib (Auto Sunset)</div>
+            <div class="settings-sub">Suraj dhalne ke baad offset</div>
+          </div>
+          <span style="font-size: 12px; font-weight: 700; color: var(--accent-green);">Sunset + 3 min</span>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Isha Jamaat</div>
+            <div class="settings-sub">Khatam hone ka waqt</div>
+          </div>
+          <div class="adjust-group">
+            <button class="btn-adjust" onclick="adjustTime('isha', -5)">-</button>
+            <span id="time-isha" class="time-val">20:00</span>
+            <button class="btn-adjust" onclick="adjustTime('isha', 5)">+</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Jumu'ah Mode</div>
+            <div class="settings-sub">Khutbah 12:45 | Jamaat 13:15</div>
+          </div>
+          <span style="font-size: 11px; font-weight: 700; color: var(--primary);">Active on Fridays</span>
+        </div>
+      </div>
+
+      <div class="section-title">Azan Tune &amp; Silent Mode</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Azan / Reminder Tune</div>
+            <div class="settings-sub">Waqt aane par notification awaz</div>
+          </div>
+          <select class="styled-select" onchange="alert('Azan tune set: ' + this.value)">
+            <option value="makkah">Makkah Mukarramah Azan</option>
+            <option value="madinah">Madinah Munawwarah Azan</option>
+            <option value="soft">Soft Tone Bell</option>
+            <option value="silent">Beep / Halka Vibrate</option>
+          </select>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Jamaat Auto-Silent (DND)</div>
+            <div class="settings-sub">18 min baad wapas normal sound</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked onchange="toggleAutoSilent(this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="section-title">Permissions &amp; Smart Sensors</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Allow Notifications</div>
+            <div class="settings-sub">1-Tap Prompt aur Jamaat reminders</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked onchange="alert('Notifications permission updated!')">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Masjid Geofencing (GPS)</div>
+            <div class="settings-sub">Masjid pohanchne par khud mark kare</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked onchange="alert('Masjid Geofencing status updated!')">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Pocket Motion Sensor</div>
+            <div class="settings-sub">Ruku &amp; Sujood pattern pehchane</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" checked onchange="alert('Pocket Motion Mode toggle updated!')">
+            <span class="slider"></span>
+          </label>
         </div>
       </div>
     </div>
+
+    <!-- ==================== BOTTOM NAVIGATION BAR ==================== -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="switchTab('home')">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('qaza')">
+        <span class="nav-icon">🔄</span>
+        <span>Qaza</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('insights')">
+        <span class="nav-icon">📊</span>
+        <span>Insights</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('report')">
+        <span class="nav-icon">📑</span>
+        <span>Report</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('settings')">
+        <span class="nav-icon">⚙️</span>
+        <span>Settings</span>
+      </button>
+    </nav>
 
   </div>
 
   <script>
     let authToken = '';
     let dailyData = [];
-    let countdownSeconds = 2535;
+    let countdownSeconds = 2300;
 
-    // Countdown interval
+    const timings = {
+      fajr: '05:30',
+      zuhr: '13:30',
+      asr: '16:45',
+      isha: '20:00'
+    };
+
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      const target = document.getElementById(`tab-${tabId}`);
+      if (target) target.classList.add('active');
+
+      const tabs = ['home', 'qaza', 'insights', 'report', 'settings'];
+      const idx = tabs.indexOf(tabId);
+      if (idx !== -1) {
+        document.querySelectorAll('.nav-item')[idx].classList.add('active');
+      }
+
+      if (tabId === 'report') {
+        loadReportCard();
+      } else if (tabId === 'qaza') {
+        loadQazaList();
+      }
+    }
+
+    // Live Countdown
     setInterval(() => {
       if (countdownSeconds > 0) {
         countdownSeconds--;
@@ -460,9 +755,9 @@
       }
     }, 1000);
 
+    // Initializer
     async function initApp() {
       try {
-        // Register or login a local simulator session
         const loginRes = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -473,7 +768,6 @@
         if (loginBody.success) {
           authToken = loginBody.data.token;
         } else {
-          // Register
           const regRes = await fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -489,7 +783,7 @@
 
         await loadDailyPrayers();
       } catch (err) {
-        console.error('Simulator init error:', err);
+        console.error('App init error:', err);
       }
     }
 
@@ -514,7 +808,7 @@
         div.className = `prayer-card ${p.prayerName === 'ZUHR' ? 'highlight' : ''}`;
         
         const loc = p.location === 'MASJID' ? 'Masjid' : 'Ghar';
-        const track = p.trackingMethod === 'GEOFENCE' ? '📍 Masjid Zone' : p.trackingMethod === 'MOTION' ? '📱 Motion Sensor' : '✍️ Manual';
+        const track = p.trackingMethod === 'GEOFENCE' ? '📍 Masjid Zone Tracked' : p.trackingMethod === 'MOTION' ? '📱 Motion Sensor Tracked' : '✍️ Manual';
         const time = p.prayedAt ? new Date(p.prayedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--';
 
         div.innerHTML = `
@@ -531,6 +825,7 @@
       });
     }
 
+    // Geofence Simulator Trigger
     async function triggerGeofence() {
       const today = new Date().toISOString().split('T')[0];
       const res = await fetch('/api/prayers/geofence-ping', {
@@ -548,11 +843,12 @@
       });
       const body = await res.json();
       if (body.success) {
-        alert('🎉 Masjid Location Zone Detected! Zuhr marked as Prayed at Masjid automatically.');
+        alert('🎉 Geofence Simulated: Phone entered Masjid Zone! Zuhr marked as Prayed at Masjid.');
         await loadDailyPrayers();
       }
     }
 
+    // Motion Simulator Trigger
     async function triggerPocketMotion() {
       const today = new Date().toISOString().split('T')[0];
       const res = await fetch('/api/prayers/motion-completed', {
@@ -568,33 +864,101 @@
       });
       const body = await res.json();
       if (body.success) {
-        alert('📱 Pocket Motion Sensors Detected Qiyam -> Ruku -> Sujood! Asr automatically recorded.');
+        alert('📱 Pocket Motion Simulated: Qiyam -> Ruku -> Sujood completed! Asr marked as Prayed.');
         await loadDailyPrayers();
       }
     }
 
     async function resolvePrompt(location) {
       document.getElementById('promptBox').style.display = 'none';
-      alert(`Fajr marked as Prayed at ${location} via 1-Tap Prompt!`);
+      alert(`Fajr marked as Prayed at ${location}!`);
       await loadDailyPrayers();
     }
 
-    async function openReportModal() {
-      const modal = document.getElementById('reportModal');
-      const container = document.getElementById('modalSvgContainer');
-      modal.style.display = 'flex';
-      container.innerHTML = '<p>Generating high-res WhatsApp card...</p>';
+    // Qaza List and Recovery
+    async function loadQazaList() {
+      const res = await fetch('/api/qaza/bank', {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
+      const body = await res.json();
+      const container = document.getElementById('qazaListContainer');
+      const counter = document.getElementById('totalQazaCounter');
 
+      if (body.success) {
+        counter.innerText = body.data.totalQaza;
+        if (body.data.prayers.length === 0) {
+          container.innerHTML = '<div class="settings-card" style="text-align:center; color:#2E7D32; font-weight:700;">Alhamdulillah koi Qaza baqi nahi hai!</div>';
+        } else {
+          container.innerHTML = '';
+          body.data.prayers.forEach(p => {
+            const row = document.createElement('div');
+            row.className = 'prayer-card';
+            row.innerHTML = `
+              <div class="prayer-left">
+                <span class="p-name">${p.prayerName}</span>
+                <span class="p-meta">Missed on: ${p.date}</span>
+              </div>
+              <button style="padding:6px 12px; border-radius:8px; background:var(--accent-green); color:white; border:none; font-size:11px; font-weight:700; cursor:pointer;" onclick="recoverQaza('${p.id}')">Ada Karein (Recover)</button>
+            `;
+            container.appendChild(row);
+          });
+        }
+      }
+    }
+
+    async function recoverQaza(prayerId) {
+      const res = await fetch(`/api/qaza/recover/${prayerId}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
+      const body = await res.json();
+      if (body.success) {
+        alert('Alhamdulillah! Qaza namaz ada ho gayi aur record recover ho gaya.');
+        await loadQazaList();
+        await loadDailyPrayers();
+      }
+    }
+
+    // Report Card SVG Loader
+    async function loadReportCard() {
+      const holder = document.getElementById('reportSvgHolder');
       const today = new Date().toISOString().split('T')[0];
       const res = await fetch(`/api/report-card?date=${today}`, {
         headers: { Authorization: `Bearer ${authToken}` }
       });
       const svg = await res.text();
-      container.innerHTML = svg;
+      holder.innerHTML = svg;
     }
 
-    function closeReportModal() {
-      document.getElementById('reportModal').style.display = 'none';
+    function shareOnWhatsApp() {
+      alert('📲 WhatsApp Share Intent Triggered: Designed report card & text summary ready to send!');
+    }
+
+    // Adjust Timing +/- 5 min
+    function adjustTime(prayer, delta) {
+      const current = timings[prayer];
+      const [h, m] = current.split(':').map(Number);
+      let total = h * 60 + m + delta;
+      if (total < 0) total += 24 * 60;
+      total = total % (24 * 60);
+
+      const nh = Math.floor(total / 60).toString().padStart(2, '0');
+      const nm = (total % 60).toString().padStart(2, '0');
+      timings[prayer] = `${nh}:${nm}`;
+      document.getElementById(`time-${prayer}`).innerText = `${nh}:${nm}`;
+    }
+
+    function toggleAutoSilent(enabled) {
+      const badge = document.getElementById('soundBadge');
+      if (enabled) {
+        badge.innerText = '🔕 Auto-Silent On';
+        badge.style.background = '#DCFCE7';
+        badge.style.color = '#166534';
+      } else {
+        badge.innerText = '🔔 Normal Sound';
+        badge.style.background = '#FEF3C7';
+        badge.style.color = '#92400E';
+      }
     }
 
     initApp();
